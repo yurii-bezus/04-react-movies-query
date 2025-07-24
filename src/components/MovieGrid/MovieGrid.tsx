@@ -1,5 +1,5 @@
 import type { Movie } from '../../types/movie';
-import styles from './MovieGrid.module.css';
+import css from './MovieGrid.module.css';
 
 interface MovieGridProps {
   movies: Movie[];
@@ -8,18 +8,15 @@ interface MovieGridProps {
 
 export default function MovieGrid({ movies, onSelect }: MovieGridProps) {
   return (
-    <ul className={styles.grid}>
-      {movies.map(movie => (
-        <li key={movie.id}>
-          <div className={styles.card} onClick={() => onSelect(movie)}>
-            <img
-              className={styles.image}
-              src={`https://image.tmdb.org/t/p/w500${movie.poster_path}`}
-              alt={movie.title}
-              loading="lazy"
-            />
-            <h2 className={styles.title}>{movie.title}</h2>
-          </div>
+    <ul className={css.grid}>
+      {movies.map((movie) => (
+        <li key={movie.id} onClick={() => onSelect(movie)} className={css.card}>
+          <img
+            src={`https://image.tmdb.org/t/p/w300${movie.poster_path}`}
+            alt={movie.title}
+            className={css.poster}
+          />
+          <h3>{movie.title}</h3>
         </li>
       ))}
     </ul>

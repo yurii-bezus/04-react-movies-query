@@ -5,6 +5,7 @@ export interface Movie {
   release_date: string;
   vote_average: number;
   backdrop_path: string;
+  poster_path: string;
 }
 
 export interface MoviesResponse {
@@ -12,3 +13,4 @@ export interface MoviesResponse {
   total_pages: number;
   results: Movie[];
 }
+

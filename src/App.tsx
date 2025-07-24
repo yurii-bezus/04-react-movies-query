@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
 import { fetchMovies } from './services/moviesApi';
-import { Movie } from './types/movie';
+import type { Movie, MoviesResponse } from './types/movie';
 import SearchBar from './components/SearchBar/SearchBar';
 import MovieGrid from './components/MovieGrid/MovieGrid';
 import Loader from './components/Loader/Loader';
@@ -15,15 +15,15 @@ export default function App() {
 
   const {
     data,
-    isLoading,
+    isPending,
     isError,
     error,
-    isSuccess,
-  } = useQuery({
+  } = useQuery<MoviesResponse, Error>({
     queryKey: ['movies', query, page],
     queryFn: () => fetchMovies(query, page),
     enabled: !!query,
-    keepPreviousData: true,
+    staleTime: 1000 * 60 * 5, 
+    gcTime: 1000 * 60 * 10, 
   });
 
   const handleSubmit = (newQuery: string) => {
@@ -31,17 +31,22 @@ export default function App() {
     setPage(1);
   };
 
+  const handleSelectMovie = (movie: Movie) => {
+    alert(`Selected movie: ${movie.title}`);
+  };
+
   return (
     <div className={css.container}>
       <SearchBar onSubmit={handleSubmit} />
-      {isLoading && <Loader />}
-      {isError && <ErrorMessage message={(error as Error).message} />}
-      {isSuccess && data.results.length === 0 && (
+
+      {isPending && <Loader />}
+      {isError && <ErrorMessage message={error.message} />}
+      {data && data.results.length === 0 && (
         <ErrorMessage message="No movies found." />
       )}
-      {isSuccess && data.results.length > 0 && (
+      {data && data.results.length > 0 && (
         <>
-          <MovieGrid movies={data.results} />
+          <MovieGrid movies={data.results} onSelect={handleSelectMovie} />
           {data.total_pages > 1 && (
             <ReactPaginate
               pageCount={data.total_pages}
