@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
-import { fetchMovies } from './services/moviesApi';
-import type { Movie, MoviesResponse } from './types/movie';
-import SearchBar from './components/SearchBar/SearchBar';
-import MovieGrid from './components/MovieGrid/MovieGrid';
-import Loader from './components/Loader/Loader';
-import ErrorMessage from './components/ErrorMessage/ErrorMessage';
+import { fetchMovies } from '../../services/moviesApi';
+import type { Movie, MoviesResponse } from '../../types/movie';
+import SearchBar from '../SearchBar/SearchBar';
+import MovieGrid from '../MovieGrid/MovieGrid';
+import Loader from '../Loader/Loader';
+import ErrorMessage from '../ErrorMessage/ErrorMessage';
 import css from './App.module.css';
 
 export default function App() {
