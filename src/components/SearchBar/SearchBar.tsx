@@ -1,4 +1,5 @@
-import { useForm } from 'react-hook-form';
+import type { FormEvent } from 'react';
+import { toast } from 'react-hot-toast';
 import css from './SearchBar.module.css';
 
 interface SearchBarProps {
@@ -6,20 +7,27 @@ interface SearchBarProps {
 }
 
 export default function SearchBar({ onSubmit }: SearchBarProps) {
-  const { register, handleSubmit, reset } = useForm<{ query: string }>();
+  const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
+    const query = formData.get('query')?.toString().trim();
 
-  const handleFormSubmit = ({ query }: { query: string }) => {
-    onSubmit(query.trim());
-    reset();
+    if (!query) {
+      toast.error('Please enter a search query!');
+      return;
+    }
+
+    onSubmit(query);
+    e.currentTarget.reset();
   };
 
   return (
-    <form className={css.form} onSubmit={handleSubmit(handleFormSubmit)}>
+    <form className={css.form} onSubmit={handleSubmit}>
       <input
         className={css.input}
         type="text"
+        name="query"
         placeholder="Search movies..."
-        {...register('query', { required: true })}
       />
       <button className={css.button} type="submit">Search</button>
     </form>
