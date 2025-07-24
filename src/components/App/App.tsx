@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import ReactPaginate from 'react-paginate';
-import { fetchMovies } from '../../services/moviesApi';
+import { fetchMovies } from '../../services/movieService';
 import type { Movie, MoviesResponse } from '../../types/movie';
 import SearchBar from '../SearchBar/SearchBar';
 import MovieGrid from '../MovieGrid/MovieGrid';
