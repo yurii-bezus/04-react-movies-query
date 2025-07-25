@@ -1,14 +1,18 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import toast, { Toaster } from 'react-hot-toast';
 import ReactPaginate from 'react-paginate';
+
 import { fetchMovies } from '../../services/movieService';
-import type { Movie, MoviesResponse } from '../../types/movie';
+import type { MoviesResponse } from '../../services/movieService';
+import type { Movie } from '../../types/movie';
+
 import SearchBar from '../SearchBar/SearchBar';
 import MovieGrid from '../MovieGrid/MovieGrid';
 import Loader from '../Loader/Loader';
 import ErrorMessage from '../ErrorMessage/ErrorMessage';
-import MovieModal from '../MovieModal/MovieModal'; // Якщо є окремий компонент
+import MovieModal from '../MovieModal/MovieModal';
+
 import css from './App.module.css';
 
 export default function App() {
@@ -30,7 +34,7 @@ export default function App() {
     placeholderData: (prevData) => prevData,
   });
 
-  const handleSubmit = (newQuery: string) => {
+  const handleSearch = (newQuery: string) => {
     if (newQuery === query) return;
     setQuery(newQuery);
     setPage(1);
@@ -41,18 +45,24 @@ export default function App() {
     toast.success(`Selected movie: ${movie.title}`);
   };
 
+  useEffect(() => {
+    if (data && data.results.length === 0) {
+      toast.error('No movies found.');
+    }
+  }, [data]);
+
   return (
     <div className={css.container}>
       <Toaster position="top-right" />
-      <SearchBar onSubmit={handleSubmit} />
+      <SearchBar onSubmit={handleSearch} />
 
       {isPending && <Loader />}
-      {isError && <ErrorMessage message={error.message} />}
-      {data && data.results.length === 0 && toast.error('No movies found.')}
-      
+      {isError && error && <ErrorMessage message={error.message} />}
+
       {data && data.results.length > 0 && (
         <>
           <MovieGrid movies={data.results} onSelect={handleSelectMovie} />
+
           {data.total_pages > 1 && (
             <ReactPaginate
               pageCount={data.total_pages}
@@ -62,8 +72,8 @@ export default function App() {
               forcePage={page - 1}
               containerClassName={css.pagination}
               activeClassName={css.active}
-              nextLabel="→"
               previousLabel="←"
+              nextLabel="→"
             />
           )}
         </>
